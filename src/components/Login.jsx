@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom'
 const Login = () => {
     const navigate=useNavigate()
     //hooks
+    const [nombre,setNombre]=React.useState('')
+    const [apellido,setApellido]=React.useState('')
     const [email,setEmail]=React.useState('')
     const [pass,setPass]=React.useState('')
     const [error,setError]=React.useState(null)
@@ -55,8 +57,12 @@ const Login = () => {
             const res=await auth.createUserWithEmailAndPassword(email,pass)
             await db.collection('usuarios').doc(res.user.email).set(
                 {
+                    id:res.user.uid,
+                    nombre,
+                    apellido,
+                    librosPrestados: [],
                     email:res.user.email,
-                    id:res.user.uid
+                    tipo: 'Usuario'
                 }
             )
             console.log(res.user);
@@ -90,6 +96,23 @@ const Login = () => {
                         </div>
                     )
                 }
+                {
+                    modoRegistro ? 
+                    (
+                        <div>
+                            <input type="text" 
+                            className='form-control mb-2'
+                            placeholder='Ingrese su nombre'
+                            onChange={e=>setNombre(e.target.value.trim())}
+                            />
+                            <input type="text" 
+                            className='form-control mb-2'
+                            placeholder='Ingrese su apellido'
+                            onChange={e=>setApellido(e.target.value.trim())}
+                            />
+                        </div>
+                    ): ''
+                }
                 <input type="email" 
                 className='form-control mb-2'
                 placeholder='Ingrese su email'
@@ -100,6 +123,7 @@ const Login = () => {
                 placeholder='Ingrese su Password'
                 onChange={e=>setPass(e.target.value.trim())}
                 />
+
                 <div className='d-grid gap-2'>
                     <button className='btn btn-outline-dark'>
                         {
